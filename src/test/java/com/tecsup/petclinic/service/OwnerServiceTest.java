@@ -1,6 +1,5 @@
 package com.tecsup.petclinic.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -28,7 +27,7 @@ public class OwnerServiceTest {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OwnerServiceTest.class);
 	@Autowired
-	private OwnerService OwnerService;
+	private OwnerService ownerservice;
 
 	/**
 	 * 
@@ -52,60 +51,59 @@ public class OwnerServiceTest {
 //	}
 	
 	@Test
-	public void testFindOwnerByFirstName() {
+	public void testOwnerByName() {
 
-		String FIND_NAME = "Jeff";
+		String FIND_FIRST_NAME = "Peter";
 		int SIZE_EXPECTED = 1;
 
-		List<Owner> owners = OwnerService.findByFirstName(FIND_NAME);
+		List<Owner> propietarios = ownerservice.findByFirstName(FIND_FIRST_NAME);
 
-		assertEquals(SIZE_EXPECTED, owners.size());
+		assertEquals(SIZE_EXPECTED, propietarios.size());
 	}
 	
 	@Test
-	public void testFindOwnerByLastName() {
+	public void testOwnerByLastName() {
 
-		String OWNER_LAST_NAME = "Escobito";
+		String LAST_NAME = "Davis";
 		Owner owner;
-		List<Owner> owners = OwnerService.findByLastName(OWNER_LAST_NAME);
-		owner = owners.get(0);
+		List<Owner> propietarios = ownerservice.findByLastName(LAST_NAME);
+		owner = propietarios.get(0);
 		
-		assertEquals(OWNER_LAST_NAME, owner.getLastName());
-		logger.info("Owner with lastname '" + OWNER_LAST_NAME + "' found.");
+		assertEquals(LAST_NAME, owner.getLastName());
+		logger.info("Propietario con el apellido '" + LAST_NAME + "' encontrado.");
 	}
 	
 	@Test
-	public void testFindOwnerByCity() {
+	public void testOwnerByCity() {
 
-		String OWNER_CITY = "Monona";
-		int SIZE_EXPECTED = 2;
+		String OWNER_CITY = "Coleman";
+		int SIZE_EXPECTED = 1;
 		
-		List<Owner> owners = OwnerService.findByCity(OWNER_CITY);
+		List<Owner> propietarios = ownerservice.findByCity(OWNER_CITY);
 		
-		assertEquals(SIZE_EXPECTED, owners.size());
-		logger.info("Owner with city '" + OWNER_CITY + "' found.");
+		assertEquals(SIZE_EXPECTED, propietarios.size());
+		logger.info("Propietario con la ciudad '" + OWNER_CITY + "' encontrado.");
 	}
 
-	//Primero creo un usuario y luego elimino para no afectar los datos de la BD
 	@Test
-	public void testDeleteOwner() throws OwnerNotFoundException {
+	public void testOwnerDelete() throws OwnerNotFoundException {
 		
-		String OWNER_FIRST_NAME = "leandro";
-		String OWNER_LAST_NAME = "morocho";
+		String OWNER_FIRST_NAME = "Renzo";
+		String OWNER_LAST_NAME = "Villaverde";
 		String OWNER_CITY = "lima";
 
 		Owner nowOwner = new Owner(OWNER_FIRST_NAME, OWNER_LAST_NAME, OWNER_CITY);
-		nowOwner = OwnerService.create(nowOwner);
-		logger.info("Owner create: " + nowOwner);
+		nowOwner = ownerservice.create(nowOwner);
+		logger.info("Propietario creado: " + nowOwner);
 
 		try {
-			OwnerService.delete(nowOwner.getId());
+			ownerservice.delete(nowOwner.getId());
 		} catch (OwnerNotFoundException e) {
 			fail(e.getMessage());
 		}
 			
 		try {
-			OwnerService.findById(nowOwner.getId());
+			ownerservice.findById(nowOwner.getId());
 			assertTrue(false);
 		} catch (OwnerNotFoundException e) {
 			assertTrue(true);
@@ -115,27 +113,27 @@ public class OwnerServiceTest {
 	}
 	
 	@Test
-	public void testCreateAndCheckOwner() {
+	public void testVerificOwner() {
 		
-		String OWNER_FIRST_NAME = "leandro";
-		String OWNER_LAST_NAME = "morocho";
+		String OWNER_FIRST_NAME = "Renzo";
+		String OWNER_LAST_NAME = "Villaverde";
 		String OWNER_CITY = "lima";
 		
 		Owner nowOwner = new Owner(OWNER_FIRST_NAME, OWNER_LAST_NAME, OWNER_CITY);
-		nowOwner = OwnerService.create(nowOwner);
+		nowOwner = ownerservice.create(nowOwner);
 		
 		try {
-			Owner ownerFound = OwnerService.findById(nowOwner.getId());
+			Owner ownerFound = ownerservice.findById(nowOwner.getId());
 			logger.info("Existe Oner");
 		}catch (OwnerNotFoundException e) {
 			logger.info("Owner no ha sido creado");
 		}
 		
-		Iterable<Owner> owners = OwnerService.findAll();
+		Iterable<Owner> owners = ownerservice.findAll();
 		
 		while(owners.iterator().hasNext()) {
 			try {
-				Owner ownerFound = OwnerService.findById(nowOwner.getId());
+				Owner ownerFound = ownerservice.findById(nowOwner.getId());
 				logger.info("Owner con el id: "+ ownerFound.getId() + " si existe");
 				break;
 			}catch (OwnerNotFoundException e) {
